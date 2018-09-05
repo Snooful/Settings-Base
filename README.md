@@ -1,2 +1,3 @@
-# Base-Storage
-A base for Snooful's storage options.
+# Settings Base
+
+The main package that all storage options extend.
