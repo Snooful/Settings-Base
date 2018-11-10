@@ -1,4 +1,11 @@
+/**
+ * The extension to use in the settings file.
+ * @abstract
+ */
+module.exports.extension = "";
+
 const debug = require("debug")("snooful:settings");
+module.exports.debug = debug;
 
 /**
  * A base settings manager for managing from the cache.
@@ -123,9 +130,4 @@ class SettingsManager {
 		return this.createWrapper(...arguments);
 	}
 }
-
-module.exports = {
-	SettingsManager,
-	debug,
-	extension: "",
-};
+module.exports.SettingsManager = SettingsManager;
