@@ -103,6 +103,7 @@ class SettingsManager {
 }
 
 module.exports = {
-	BaseSettingsManager,
+	SettingsManager,
 	debug,
+	extension: "",
 };
