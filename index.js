@@ -15,6 +15,7 @@ class SettingsManager {
 
 	/**
 	 * Initializes the database.
+	 * @abstract
 	 * @returns {boolean} The success of the initialization.
 	 */
 	init() {
@@ -24,6 +25,7 @@ class SettingsManager {
 
 	/**
 	 * Updates the database.
+	 * @abstract
 	 * @returns {boolean} The success of the update.
 	 */
 	update() {
@@ -32,84 +34,93 @@ class SettingsManager {
 	}
 
 	/**
-	 * Sets a key for a given subreddit.
-	 * @param {string} subreddit The subreddit/namespace to save the setting under.
+	 * Sets a key for a given namespace.
+	 * @param {string} namespace The namespace to save the setting under.
 	 * @param {string} key The key to set.
 	 * @param {*} value The value to be set.
 	 */
-	async set(subreddit, key, value) {
+	async set(namespace, key, value) {
 		// Update our cache
-		if (!this.settings[subreddit]) {
-			debug(`making settings section for ${subreddit} as it did not have one`);
-			this.settings[subreddit] = {};
+		if (!this.settings[namespace]) {
+			debug(`making settings section for ${namespace} as it did not have one`);
+			this.settings[namespace] = {};
 		}
 
-		debug(`set '${key}' to '${value}' for ${subreddit}`);
-		this.settings[subreddit][key] = value;
+		debug(`set '${key}' to '${value}' for ${namespace}`);
+		this.settings[namespace][key] = value;
 
-		return this.update(subreddit);
+		return this.update(namespace);
 	}
 
 	/**
-	 * Clears a key for a given subreddit.
-	 * @param {string} subreddit The subreddit/namespace to clear the setting in.
+	 * Clears a key for a given namespace.
+	 * @param {string} namespace The namespace to clear the setting in.
 	 * @param {string} key The key to clear.
 	 */
-	async clear(subreddit, key) {
+	async clear(namespace, key) {
 		// Update our cache
-		if (!this.settings[subreddit]) {
-			debug(`making settings section for ${subreddit} as it did not have one`);
-			this.settings[subreddit] = {};
+		if (!this.settings[namespace]) {
+			debug(`making settings section for ${namespace} as it did not have one`);
+			this.settings[namespace] = {};
 		}
 
-		debug(`cleared '${key}' for ${subreddit}`);
-		this.settings[subreddit][key] = undefined;
+		debug(`cleared '${key}' for ${namespace}`);
+		this.settings[namespace][key] = undefined;
 
-		return this.update(subreddit);
+		return this.update(namespace);
 	}
 
 	/**
-	 * Gets a key from a given subreddit.
-	 * @param {string} subreddit The subreddit/namespace to get the setting under.
+	 * Gets a key from a given namespace.
+	 * @param {string} namespace The namespace to get the setting under.
 	 * @param {string} key The key to get.
 	 * @returns *
 	 */
-	get(subreddit, key) {
-		if (this.settings[subreddit]) {
-			return this.settings[subreddit][key];
+	get(namespace, key) {
+		if (this.settings[namespace]) {
+			return this.settings[namespace][key];
 		} else {
 			return undefined;
 		}
 	}
 
 	/**
-	 * A wrapper around the settings manager with methods applying to the current subreddit.
-	 * @param {string} subreddit The subreddit to get the wrapper of.
-	 * @returns {Object} A wrapper with functions for the current subreddit.
+	 * Creates a wrapper around the settings manager with functions applying to the current namespace.
+	 * @param {string} namespace The namespace to get the wrapper of.
+	 * @returns {Object} A wrapper with functions for the current namespace.
 	 */
-	subredditWrapper(subreddit) {
+	createWrapper(namespace) {
 		return {
 			/**
-			 * Clears a key for the current subreddit namespace.
+			 * Clears a key for the current namespace.
 			 * @param {string} key The key to clear.
 			 * @returns *
 			 */
-			clear: key => this.clear(subreddit, key),
+			clear: key => this.clear(namespace, key),
 			/**
-				 * Gets a key from the current subreddit namespace.
-				 * @param {string} key The key to get.
-				 * @returns *
-				 */
-			get: key => this.get(subreddit, key),
+			 * Gets a key from the current namespace.
+			 * @param {string} key The key to get.
+			 * @returns *
+			 */
+			get: key => this.get(namespace, key),
 			manager: this,
 			/**
-			 * Sets a key for the current subreddit namespace.
+			 * Sets a key for the current namespace.
 			 * @param {string} key The key to set.
 			 * @param {*} value The value to be set.
 			 * @returns *
 			 */
-			set: (key, value) => this.set(subreddit, key, value),
+			set: (key, value) => this.set(namespace, key, value),
 		};
+	}
+
+	/**
+	 * An alias for {@link SettingsManager#createWrapper}.
+	 * @deprecated Use {@link SettingsManager#createWrapper} instead.
+	 * @returns {*}
+	 */
+	subredditWrapper() {
+		return this.createWrapper(...arguments);
 	}
 }
 
