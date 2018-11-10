@@ -17,11 +17,14 @@ class SettingsManager {
 	 * Initializes the database.
 	 */
 	init() {
-		debug(`settings manager does not initialize`);
+		debug("settings manager does not initialize");
 	}
 
+	/**
+	 * Updates the database.
+	 */
 	update() {
-		debug(`settings manager does not update`);
+		debug("settings manager does not update");
 	}
 
 	/**
@@ -77,28 +80,32 @@ class SettingsManager {
 
 	/**
 	 * A wrapper around the settings manager with methods applying to the current subreddit.
+	 * @param {string} subreddit The subreddit to get the wrapper of.
+	 * @returns {Object} A wrapper with functions for the current subreddit.
 	 */
 	subredditWrapper(subreddit) {
 		return {
 			/**
-			 * Sets a key for the current subreddit namespace.
-			 * @param {string} key The key to set.
-			 * @param {*} value The value to be set.
-			 */
-			set: (key, value) => this.set(subreddit, key, value),
-			/**
 			 * Clears a key for the current subreddit namespace.
 			 * @param {string} key The key to clear.
+			 * @returns *
 			 */
 			clear: key => this.clear(subreddit, key),
 			/**
-			 * Gets a key from the current subreddit namespace.
-			 * @param {string} key The key to get.
-			 * @returns *
-			 */
+				 * Gets a key from the current subreddit namespace.
+				 * @param {string} key The key to get.
+				 * @returns *
+				 */
 			get: key => this.get(subreddit, key),
 			manager: this,
-		}
+			/**
+			 * Sets a key for the current subreddit namespace.
+			 * @param {string} key The key to set.
+			 * @param {*} value The value to be set.
+			 * @returns *
+			 */
+			set: (key, value) => this.set(subreddit, key, value),
+		};
 	}
 }
 
