@@ -15,16 +15,20 @@ class SettingsManager {
 
 	/**
 	 * Initializes the database.
+	 * @returns {boolean} The success of the initialization.
 	 */
 	init() {
 		debug("settings manager does not initialize");
+		return false;
 	}
 
 	/**
 	 * Updates the database.
+	 * @returns {boolean} The success of the update.
 	 */
 	update() {
 		debug("settings manager does not update");
+		return false;
 	}
 
 	/**
