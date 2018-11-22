@@ -12,8 +12,6 @@ module.exports.debug = debug;
  */
 class SettingsManager {
 	constructor() {
-		this.init();
-
 		/**
 		 * The settings cache.
 		 */
