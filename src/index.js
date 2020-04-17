@@ -41,17 +41,29 @@ class SettingsManager {
 	}
 
 	/**
+	 * Ensures the cache has a settings object for a given namespace.
+	 * @param {string} namespace The namespace to create a settings object for.
+	 * @returns {boolean} Whether a settings object was created in the cache.
+	 */
+	ensure(namespace) {
+		if (!this.settings[namespace]) {
+			this.settings[namespace] = {};
+			debug(`made settings object for ${namespace} as it did not exist before`);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Sets a key for a given namespace.
 	 * @param {string} namespace The namespace to save the setting under.
 	 * @param {string} key The key to set.
 	 * @param {*} value The value to be set.
 	 */
 	async set(namespace, key, value) {
-		// Update our cache
-		if (!this.settings[namespace]) {
-			debug(`making settings section for ${namespace} as it did not have one`);
-			this.settings[namespace] = {};
-		}
+		this.ensure(namespace);
 
 		debug(`set '${key}' to '${value}' for ${namespace}`);
 		this.settings[namespace][key] = value;
@@ -65,11 +77,7 @@ class SettingsManager {
 	 * @param {string} key The key to clear.
 	 */
 	async clear(namespace, key) {
-		// Update our cache
-		if (!this.settings[namespace]) {
-			debug(`making settings section for ${namespace} as it did not have one`);
-			this.settings[namespace] = {};
-		}
+		this.ensure(namespace);
 
 		debug(`cleared '${key}' for ${namespace}`);
 		this.settings[namespace][key] = undefined;
