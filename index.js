@@ -118,14 +118,5 @@ class SettingsManager {
 			set: (key, value) => this.set(namespace, key, value),
 		};
 	}
-
-	/**
-	 * An alias for {@link SettingsManager#createWrapper}.
-	 * @deprecated Use {@link SettingsManager#createWrapper} instead.
-	 * @returns {*}
-	 */
-	subredditWrapper() {
-		return this.createWrapper(...arguments);
-	}
 }
 module.exports.SettingsManager = SettingsManager;
