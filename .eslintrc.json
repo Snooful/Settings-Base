@@ -1,6 +1,0 @@
-{
-	"extends": "eslint-config-haykam",
-	"rules": {
-		"require-await": "off"
-	}
-}
