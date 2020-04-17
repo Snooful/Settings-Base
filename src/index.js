@@ -7,6 +7,8 @@ module.exports.extension = "";
 const debug = require("debug")("snooful:settings");
 module.exports.debug = debug;
 
+const SettingsWrapper = require("./wrapper.js");
+
 /**
  * A base settings manager for managing from the cache.
  */
@@ -92,31 +94,10 @@ class SettingsManager {
 	/**
 	 * Creates a wrapper around the settings manager with functions applying to the current namespace.
 	 * @param {string} namespace The namespace to get the wrapper of.
-	 * @returns {Object} A wrapper with functions for the current namespace.
+	 * @returns {SettingsWrapper} A settings wrapper with the context of the current namespace.
 	 */
 	createWrapper(namespace) {
-		return {
-			/**
-			 * Clears a key for the current namespace.
-			 * @param {string} key The key to clear.
-			 * @returns *
-			 */
-			clear: key => this.clear(namespace, key),
-			/**
-			 * Gets a key from the current namespace.
-			 * @param {string} key The key to get.
-			 * @returns *
-			 */
-			get: key => this.get(namespace, key),
-			manager: this,
-			/**
-			 * Sets a key for the current namespace.
-			 * @param {string} key The key to set.
-			 * @param {*} value The value to be set.
-			 * @returns *
-			 */
-			set: (key, value) => this.set(namespace, key, value),
-		};
+		return new SettingsWrapper(namespace, this);
 	}
 }
 module.exports.SettingsManager = SettingsManager;
