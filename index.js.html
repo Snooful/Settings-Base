@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="SettingsManager.html">SettingsManager</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#clear">clear</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#createWrapper">createWrapper</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#get">get</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#init">init</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#set">set</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#update">update</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="SettingsWrapper.html">SettingsWrapper</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsWrapper.html#clear">clear</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsWrapper.html#get">get</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsWrapper.html#set">set</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#extension">extension</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="SettingsManager.html">SettingsManager</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#clear">clear</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#createWrapper">createWrapper</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#ensure">ensure</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#get">get</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#init">init</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#set">set</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsManager.html#update">update</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="SettingsWrapper.html">SettingsWrapper</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsWrapper.html#clear">clear</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsWrapper.html#get">get</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="SettingsWrapper.html#set">set</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#extension">extension</a></span></li>
 </nav>
 
 <div id="main">
@@ -82,19 +82,31 @@ class SettingsManager {
 	}
 
 	/**
+	 * Ensures the cache has a settings object for a given namespace.
+	 * @param {string} namespace The namespace to create a settings object in.
+	 * @returns {boolean} Whether a settings object was created in the cache.
+	 */
+	ensure(namespace) {
+		if (!this.settings[namespace]) {
+			this.settings[namespace] = {};
+			debug("made settings object in the '%s' namespace as it did not exist before", namespace);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Sets a key for a given namespace.
 	 * @param {string} namespace The namespace to save the setting under.
 	 * @param {string} key The key to set.
 	 * @param {*} value The value to be set.
 	 */
 	async set(namespace, key, value) {
-		// Update our cache
-		if (!this.settings[namespace]) {
-			debug(`making settings section for ${namespace} as it did not have one`);
-			this.settings[namespace] = {};
-		}
+		this.ensure(namespace);
 
-		debug(`set '${key}' to '${value}' for ${namespace}`);
+		debug("set '%s' to '%s' in the '%s' namespace", key, value, namespace);
 		this.settings[namespace][key] = value;
 
 		return this.update(namespace);
@@ -106,13 +118,9 @@ class SettingsManager {
 	 * @param {string} key The key to clear.
 	 */
 	async clear(namespace, key) {
-		// Update our cache
-		if (!this.settings[namespace]) {
-			debug(`making settings section for ${namespace} as it did not have one`);
-			this.settings[namespace] = {};
-		}
+		this.ensure(namespace);
 
-		debug(`cleared '${key}' for ${namespace}`);
+		debug("cleared '%s' in the '%s' namespace", key, namespace);
 		this.settings[namespace][key] = undefined;
 
 		return this.update(namespace);
@@ -153,7 +161,7 @@ module.exports.SettingsManager = SettingsManager;</code></pre>
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Fri Apr 17 2020 22:51:09 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Fri Apr 17 2020 23:17:09 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
