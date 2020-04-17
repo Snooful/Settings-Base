@@ -1,9 +1,3 @@
-/**
- * The extension to use in the settings file.
- * @abstract
- */
-module.exports.extension = "";
-
 const debug = require("debug")("snooful:settings");
 module.exports.debug = debug;
 
@@ -25,9 +19,19 @@ class SettingsManager {
 	 * @abstract
 	 * @returns {boolean} The success of the initialization.
 	 */
-	init() {
+	initialize() {
 		debug("settings manager does not initialize");
 		return false;
+	}
+
+	/**
+	 * An alias for {@link SettingsManager#initialize}.
+	 * @deprecated Use {@link SettingsManager#initialize} instead.
+	 * @param {...*} args The arguments to pass through.
+	 * @returns {*}
+	 */
+	init(...args) {
+		return this.initialize(...args);
 	}
 
 	/**
@@ -108,4 +112,11 @@ class SettingsManager {
 		return new SettingsWrapper(namespace, this);
 	}
 }
-module.exports.SettingsManager = SettingsManager;
+
+/**
+ * The extension to use in the settings file.
+ * @abstract
+ */
+SettingsManager.extension = "";
+
+module.exports = SettingsManager;
